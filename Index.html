@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santi's Pizza — Menú</title>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    background: #0d0d0d;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 16px;
+    min-height: 100vh;
+    touch-action: pan-y;
+  }
+
+  .menu {
+    width: 100%;
+    max-width: 760px;
+    background: #0f0b08;
+    border-radius: 6px;
+    overflow: hidden;
+    animation: rise 0.9s cubic-bezier(.22,1,.36,1) both;
+    position: relative;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .menu::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1.5px solid rgba(210,160,80,0.25);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* ══════════ HEADER ══════════ */
+  .header {
+    background: #100b06;
+    padding: 44px 50px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,80,20,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 50% 100%, rgba(180,60,10,0.10) 0%, transparent 80%);
+    pointer-events: none;
+  }
+
+  .top-rule {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, transparent, #C8A050, transparent);
+    margin: 0 auto 22px;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand-wrap {
+    flex: 1;
+    text-align: center;
+  }
+
+  .brand-small {
+    font-family: 'Arial Black', Impact, 'Trebuchet MS', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 9px;
+    color: #C8A050;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 8px;
+    /* letter-by-letter wave */
+    display: inline-flex;
+    gap: 0;
+  }
+
+  .brand-small .cl {
+    display: inline-block;
+    animation: waveChar 3s ease-in-out infinite;
+  }
+
+  @keyframes waveChar {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50%       { transform: translateY(-3px); opacity: 1; }
+  }
+
+  .brand {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    font-size: 78px;
+    line-height: 0.9;
+    color: #F5EDDB;
+    letter-spacing: -1px;
+    text-shadow:
+      0 0 40px rgba(200,160,80,0.25),
+      0 4px 0 rgba(160,40,10,0.6);
+    /* chars wrapped in spans for animation */
+    display: block;
+  }
+
+  .brand .word {
+    display: inline-flex;
+    overflow: visible;
+  }
+
+  .brand .ch {
+    display: inline-block;
+    animation: floatChar 4s ease-in-out infinite;
+    transform-origin: bottom center;
+  }
+
+  /* staggered delays per letter via inline style */
+
+  @keyframes floatChar {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25%       { transform: translateY(-6px) rotate(-1.5deg); }
+    75%       { transform: translateY(3px) rotate(1deg); }
+  }
+
+  .brand em {
+    font-style: italic;
+    font-weight: 400;
+    color: #E07030;
+    display: inline-flex;
+  }
+
+  .brand em .ch {
+    animation: floatCharEm 3.5s ease-in-out infinite;
+  }
+
+  @keyframes floatCharEm {
+    0%, 100% { transform: translateY(0) skewX(0deg); }
+    30%       { transform: translateY(-8px) skewX(-3deg); }
+    70%       { transform: translateY(4px) skewX(2deg); }
+  }
+
+  /* ── Pizza SVG ── */
+  .pizza-hero {
+    flex-shrink: 0;
+    width: 160px;
+    height: 160px;
+    animation: floatPizza 4s ease-in-out infinite;
+    filter: drop-shadow(0 8px 24px rgba(200,80,20,0.45));
+    cursor: pointer;
+    transition: filter 0.3s;
+  }
+
+  .pizza-hero:hover {
+    filter: drop-shadow(0 12px 36px rgba(230,100,20,0.7));
+    animation-play-state: paused;
+  }
+
+  @keyframes floatPizza {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50%       { transform: translateY(-10px) rotate(3deg); }
+  }
+
+  .pizza-hero.spin {
+    animation: spinPizza 0.6s cubic-bezier(.36,.07,.19,.97);
+  }
+  @keyframes spinPizza {
+    0%   { transform: rotate(0deg) scale(1); }
+    40%  { transform: rotate(200deg) scale(1.15); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .orn-line {
+    flex: 1;
+    max-width: 140px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #C8A050);
+  }
+  .orn-line.r { background: linear-gradient(to left, transparent, #C8A050); }
+  .orn-diamond {
+    width: 6px; height: 6px;
+    background: #C8A050;
+    transform: rotate(45deg);
+  }
+
+  /* ══════════ SECTION HEADER ══════════ */
+  .section-header {
+    background: #C8A050;
+    padding: 11px 0;
+    text-align: center;
+  }
+  .section-header span {
+    font-family: 'Arial Black', Impact, 'Trebuchet MS', Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: 10px;
+    color: #0f0b06;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  /* ══════════ SIZES SELECTOR ══════════ */
+  .sizes-section {
+    background: #0e0a07;
+    padding: 22px 24px 20px;
+    border-bottom: 1px solid rgba(200,160,80,0.12);
+  }
+
+  .sizes-label {
+    font-family: 'Arial Black', Impact, 'Trebuchet MS', Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: rgba(200,160,80,0.5);
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .sizes-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .size-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 12px 14px 10px;
+    border: 1px solid rgba(200,160,80,0.18);
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.3s cubic-bezier(.22,1,.36,1);
+    position: relative;
+    min-width: 90px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .size-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 4px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(232,232,232,0.07), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .size-btn:hover {
+    border-color: rgba(232,232,232,0.35);
+    transform: translateY(-2px);
+  }
+  .size-btn:hover::before { opacity: 1; }
+
+  .size-btn.selected {
+    border-color: rgba(232,232,232,0.65);
+    background: rgba(232,232,232,0.05);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 28px rgba(0,0,0,0.4), 0 0 0 1px rgba(232,232,232,0.2);
+  }
+  .size-btn.selected::before { opacity: 1; }
+
+  /* Pizza icon per size */
+  .size-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.4s cubic-bezier(.22,1,.36,1), filter 0.3s;
+  }
+  .size-btn:hover .size-icon { transform: rotate(-10deg) scale(1.08); filter: brightness(1.3); }
+  .size-btn.selected .size-icon { transform: rotate(-8deg) scale(1.12); filter: brightness(1.5) drop-shadow(0 0 8px rgba(255,255,255,0.25)); }
+
+  .size-name {
+    font-family: 'Arial Black', Impact, 'Trebuchet MS', Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    color: #F5EDDB;
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: color 0.3s;
+  }
+  .size-btn.selected .size-name { color: #e8e8e8; }
+
+  .size-price {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #C8A050;
+    letter-spacing: 0.5px;
+    transition: all 0.3s;
+  }
+  .size-btn.selected .size-price {
+    color: #e8e8e8;
+    font-weight: 700;
+  }
+
+  .size-slices {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: rgba(200,160,80,0.45);
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .size-btn.selected .size-slices { color: rgba(200,160,80,0.8); }
+
+  /* Selected indicator pill */
+  .selected-badge {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    background: #e8e8e8;
+    color: #0f0b06;
+    font-family: 'Arial Black', Impact, 'Trebuchet MS', Arial, sans-serif;
+    font-size: 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
+    white-space: nowrap;
+  }
+  .size-btn.selected .selected-badge {
+    transform: translateX(-50%) scale(1);
+  }
+
+  /* ══════════ GRID ══════════ */
+  .pizzas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 6px 14px 28px;
+    gap: 0;
+  }
+
+  .pizza-item {
+    padding: 17px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.045);
+    transition: background 0.25s, transform 0.2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pizza-item:nth-child(odd) {
+    border-right: 1px solid rgba(255,255,255,0.045);
+  }
+
+  .pizza-item::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 3px; height: 100%;
+    background: #E07030;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.25s ease;
+  }
+
+  .pizza-item:hover::after,
+  .pizza-item.active::after {
+    transform: scaleY(1);
+  }
+
+  .pizza-item:hover,
+  .pizza-item.active {
+    background: rgba(200,160,80,0.08);
+  }
+
+  .pizza-item.active .pizza-ingredients {
+    opacity: 1;
+    color: #F5EDDB;
+  }
+
+  .pizza-name {
+    font-family: 'Arial Black', Impact, 'Trebuchet MS', Arial, sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: #F5EDDB;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+  }
+
+  .pizza-name::before {
+    content: '';
+    width: 20px;
+    height: 2px;
+    background: #E07030;
+    flex-shrink: 0;
+    border-radius: 2px;
+    transition: width 0.25s;
+  }
+
+  .pizza-item:hover .pizza-name::before,
+  .pizza-item.active .pizza-name::before {
+    width: 28px;
+  }
+
+  .pizza-ingredients {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #C8A050;
+    opacity: 0.75;
+    padding-left: 30px;
+    line-height: 1.6;
+    transition: opacity 0.2s, color 0.2s;
+  }
+
+  /* ── footer ── */
+  .menu-footer {
+    padding: 22px 50px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    border-top: 1px solid rgba(200,160,80,0.15);
+  }
+  .foot-dot {
+    width: 5px; height: 5px;
+    background: #E07030;
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+  .foot-line {
+    flex: 1;
+    max-width: 100px;
+    height: 1px;
+    background: rgba(200,160,80,0.25);
+  }
+  .foot-icon {
+    font-size: 22px;
+    opacity: 0.6;
+    animation: floatPizza 3s ease-in-out infinite;
+  }
+
+  /* ══════════ RESPONSIVE ══════════ */
+  @media (max-width: 600px) {
+    body { padding: 16px 8px; }
+    .header { padding: 32px 20px 28px; }
+    .header-inner { flex-direction: column; gap: 20px; }
+    .pizza-hero { width: 130px; height: 130px; order: -1; }
+    .brand { font-size: 54px; }
+    .brand-small { letter-spacing: 6px; }
+    .orn-line { max-width: 80px; }
+    .pizzas-grid { grid-template-columns: 1fr; padding: 4px 8px 24px; }
+    .pizza-item { border-right: none !important; padding: 14px 16px; }
+    .pizza-name { font-size: 17px; letter-spacing: 2px; }
+    .pizza-ingredients { font-size: 10.5px; }
+    .menu-footer { padding: 18px 24px 22px; }
+    .sizes-section { padding: 18px 12px 16px; }
+    .size-btn { min-width: 72px; padding: 10px 8px 8px; }
+    .size-name { font-size: 10px; letter-spacing: 2px; }
+    .size-price { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+<div class="menu">
+
+  <div class="header">
+    <div class="top-rule"></div>
+
+    <div class="header-inner">
+      <div class="brand-wrap">
+        <div class="brand-small" id="brandSmall"></div>
+        <div class="brand" id="brandMain"></div>
+      </div>
+
+      <svg class="pizza-hero" id="pizzaSvg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="195" rx="60" ry="6" fill="rgba(0,0,0,0.35)"/>
+        <circle cx="100" cy="100" r="92" fill="#D4933A"/>
+        <circle cx="100" cy="100" r="92" fill="none" stroke="#C47B20" stroke-width="14"/>
+        <circle cx="100" cy="100" r="78" fill="#B33A1A"/>
+        <circle cx="100" cy="100" r="74" fill="#E8C060" opacity="0.85"/>
+        <ellipse cx="80" cy="85" rx="18" ry="12" fill="#F0D070" opacity="0.7" transform="rotate(-20 80 85)"/>
+        <ellipse cx="120" cy="110" rx="16" ry="10" fill="#F0D070" opacity="0.6" transform="rotate(15 120 110)"/>
+        <ellipse cx="95" cy="125" rx="14" ry="9" fill="#F0D070" opacity="0.65" transform="rotate(-10 95 125)"/>
+        <circle cx="90" cy="80" r="10" fill="#8B1A00"/>
+        <circle cx="90" cy="80" r="10" fill="none" stroke="#6A1400" stroke-width="1.5"/>
+        <circle cx="115" cy="95" r="9" fill="#8B1A00"/>
+        <circle cx="115" cy="95" r="9" fill="none" stroke="#6A1400" stroke-width="1.5"/>
+        <circle cx="82" cy="112" r="9" fill="#8B1A00"/>
+        <circle cx="82" cy="112" r="9" fill="none" stroke="#6A1400" stroke-width="1.5"/>
+        <circle cx="110" cy="120" r="8" fill="#8B1A00"/>
+        <circle cx="108" cy="75" r="7" fill="#8B1A00"/>
+        <circle cx="86" cy="76" r="2" fill="rgba(255,255,255,0.2)"/>
+        <circle cx="111" cy="91" r="2" fill="rgba(255,255,255,0.2)"/>
+        <ellipse cx="70" cy="98" rx="8" ry="5" fill="#A0784A"/>
+        <rect x="67" y="98" width="6" height="5" rx="1" fill="#C09060"/>
+        <ellipse cx="130" cy="85" rx="7" ry="4.5" fill="#A0784A"/>
+        <rect x="127" y="85" width="6" height="5" rx="1" fill="#C09060"/>
+        <circle cx="100" cy="100" r="5" fill="#2D4A1E"/>
+        <circle cx="100" cy="100" r="2" fill="#C8A050"/>
+        <circle cx="75" cy="118" r="4.5" fill="#2D4A1E"/>
+        <circle cx="75" cy="118" r="1.8" fill="#C8A050"/>
+        <line x1="100" y1="8" x2="100" y2="192" stroke="rgba(180,90,20,0.3)" stroke-width="1.5"/>
+        <line x1="8" y1="100" x2="192" y2="100" stroke="rgba(180,90,20,0.3)" stroke-width="1.5"/>
+        <line x1="35" y1="35" x2="165" y2="165" stroke="rgba(180,90,20,0.3)" stroke-width="1.5"/>
+        <line x1="165" y1="35" x2="35" y2="165" stroke="rgba(180,90,20,0.3)" stroke-width="1.5"/>
+        <ellipse cx="75" cy="65" rx="28" ry="18" fill="rgba(255,255,255,0.07)" transform="rotate(-30 75 65)"/>
+      </svg>
+    </div>
+
+    <div class="ornament">
+      <div class="orn-line"></div>
+      <div class="orn-diamond"></div>
+      <div class="orn-line r"></div>
+    </div>
+  </div>
+
+  <!-- SIZES -->
+  <div class="sizes-section">
+    <div class="sizes-label">Elige el tamaño</div>
+    <div class="sizes-row" id="sizesRow">
+      <!-- generated by JS -->
+    </div>
+  </div>
+
+  <div class="section-header"><span>Especialidades</span></div>
+
+  <div class="pizzas-grid" id="pizzaGrid">
+    <div class="pizza-item">
+      <div class="pizza-name">Hawaiana</div>
+      <div class="pizza-ingredients">Queso · Jamón · Piña</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Campesina</div>
+      <div class="pizza-ingredients">Queso · Jitomate · Champiñones · Pimiento · Cebolla</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Carnes Frías</div>
+      <div class="pizza-ingredients">Queso · Jamón · Salchicha · Tocino · Chorizo</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Máxima</div>
+      <div class="pizza-ingredients">Queso · Jamón · Pepperoni · Chorizo · Salchicha · Pimiento · Cebolla</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Mexicana</div>
+      <div class="pizza-ingredients">Queso · Tocino · Chorizo · Jalapeño</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Veracruzana</div>
+      <div class="pizza-ingredients">Queso · Atún · Pimiento · Cebolla</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Pepperoni</div>
+      <div class="pizza-ingredients">Queso · Pepperoni</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Festiva</div>
+      <div class="pizza-ingredients">Queso · Pepperoni · Champiñones · Salchicha · Cebolla · Aceitunas · Pimiento</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Al Pastor</div>
+      <div class="pizza-ingredients">Queso · Carne al Pastor · Piña</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Vegetariana</div>
+      <div class="pizza-ingredients">Queso · Champiñones · Piña · Pimiento · Aceitunas</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Texas</div>
+      <div class="pizza-ingredients">Queso · Salchicha · Tocino · Jalapeño · Cebolla</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Ranchera</div>
+      <div class="pizza-ingredients">Queso · Frijoles · Chorizo · Jalapeño</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Azteca</div>
+      <div class="pizza-ingredients">Queso · Tocino · Chorizo · Jalapeño · Aguacate</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Super Especial</div>
+      <div class="pizza-ingredients">Queso · Pepperoni · Tocino · Champiñones · Pimiento · Cebolla</div>
+    </div>
+    <div class="pizza-item">
+      <div class="pizza-name">Griega</div>
+      <div class="pizza-ingredients">Queso · Jamón · Aceitunas · Pimiento · Cebolla</div>
+    </div>
+  </div>
+
+  <div class="menu-footer">
+    <div class="foot-line"></div>
+    <div class="foot-dot"></div>
+    <div class="foot-icon">🍕</div>
+    <div class="foot-dot"></div>
+    <div class="foot-line"></div>
+  </div>
+
+</div>
+
+<script>
+  // ── Animated brand text ──
+  function makeWaveText(el, text, baseDelay, animClass) {
+    el.innerHTML = '';
+    [...text].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'cl';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      span.style.animationDelay = (baseDelay + i * 0.08) + 's';
+      el.appendChild(span);
+    });
+  }
+
+  function makeBrand() {
+    const brandSmall = document.getElementById('brandSmall');
+    makeWaveText(brandSmall, 'Pizzería', 0);
+
+    const brandMain = document.getElementById('brandMain');
+    brandMain.innerHTML = '';
+
+    // "Santi's" — each char animated
+    const word1 = document.createElement('span');
+    word1.className = 'word';
+    [..."Santi's"].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'ch';
+      span.textContent = ch;
+      span.style.animationDelay = (i * 0.1) + 's';
+      word1.appendChild(span);
+    });
+    brandMain.appendChild(word1);
+
+    brandMain.appendChild(document.createElement('br'));
+
+    // "Pizza" — italic, different animation
+    const em = document.createElement('em');
+    [...'Pizza'].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'ch';
+      span.textContent = ch;
+      span.style.animationDelay = (0.3 + i * 0.09) + 's';
+      em.appendChild(span);
+    });
+    brandMain.appendChild(em);
+  }
+
+  makeBrand();
+
+  // ── Pizza spin ──
+  const pizzaSvg = document.getElementById('pizzaSvg');
+  pizzaSvg.addEventListener('click', () => {
+    pizzaSvg.classList.remove('spin');
+    void pizzaSvg.offsetWidth;
+    pizzaSvg.classList.add('spin');
+    pizzaSvg.addEventListener('animationend', () => pizzaSvg.classList.remove('spin'), { once: true });
+  });
+
+  // ── Pizza items hover/active ──
+  document.querySelectorAll('.pizza-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.pizza-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  // ── Sizes ──
+  const sizes = [
+    { name: 'Personal', price: '$10.000', slices: null,  svgSize: 64 },
+    { name: 'Mediana',  price: '$22.000', slices: 6,     svgSize: 72 },
+    { name: 'Grande',   price: '$28.000', slices: 8,     svgSize: 82 },
+    { name: 'Familiar', price: '$35.000', slices: 10,    svgSize: 92 },
+    { name: 'Jumbo',    price: '$42.000', slices: 12,    svgSize: 102 },
+  ];
+
+  // Pie-chart style SVG matching reference image: outer double ring + pie with extracted slice
+  function makePieSliceSVG(totalSize, sliceCount) {
+    const cx = totalSize / 2, cy = totalSize / 2;
+    const R = totalSize / 2 - 4;      // outer radius
+    const r2 = R - 5;                  // inner ring radius (double ring effect)
+    const stroke = '#e8e8e8';
+    const strokeW = 1.8;
+    const bg = 'none';
+
+    // The "missing slice" angle — one slice gap
+    // Slice goes from ~55° to ~95° (right-top, like reference)
+    const sliceAngle = sliceCount ? (360 / sliceCount) : 90;
+    const gapStart = 55;  // degrees from 12 o'clock, clockwise
+    const gapEnd   = gapStart + sliceAngle;
+
+    function polar(cx, cy, r, deg) {
+      const rad = (deg - 90) * Math.PI / 180;
+      return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+    }
+
+    const [ax, ay] = polar(cx, cy, R, gapStart);
+    const [bx, by] = polar(cx, cy, R, gapEnd);
+    const largeArc = sliceAngle > 180 ? 1 : 0;
+
+    // Main circle with gap (arc going the long way around)
+    const mainArc = `M ${ax} ${ay} A ${R} ${R} 0 ${1 - largeArc} 0 ${bx} ${by} L ${cx} ${cy} Z`;
+
+    // Extracted slice (slightly offset outward)
+    const offsetDist = 6;
+    const midAngle = gapStart + sliceAngle / 2;
+    const [ox, oy] = polar(0, 0, offsetDist, midAngle);
+    const [sax, say] = polar(cx + ox, cy + oy, R * 0.88, gapStart);
+    const [sbx, sby] = polar(cx + ox, cy + oy, R * 0.88, gapEnd);
+    const slicePath = `M ${cx + ox} ${cy + oy} L ${sax} ${say} A ${R * 0.88} ${R * 0.88} 0 ${largeArc} 1 ${sbx} ${sby} Z`;
+
+    // Number position: center of slice
+    const [nx, ny] = polar(cx + ox, cy + oy, R * 0.52, midAngle);
+    const numEl = sliceCount
+      ? `<text x="${nx}" y="${ny + 3.5}" text-anchor="middle" font-family="Arial Black,Impact,sans-serif" font-size="${totalSize * 0.13}" font-weight="700" fill="#e8e8e8">${sliceCount}</text>`
+      : '';
+
+    // Inner double-ring (decorative)
+    const innerR = r2 - 4;
+
+    return `<svg width="${totalSize}" height="${totalSize}" viewBox="0 0 ${totalSize} ${totalSize}" xmlns="http://www.w3.org/2000/svg">
+      <!-- outer decorative ring -->
+      <circle cx="${cx}" cy="${cy}" r="${R}" fill="${bg}" stroke="${stroke}" stroke-width="${strokeW}" opacity="0.25"/>
+      <!-- inner ring -->
+      <circle cx="${cx}" cy="${cy}" r="${innerR}" fill="${bg}" stroke="${stroke}" stroke-width="${strokeW * 0.7}" opacity="0.15"/>
+      <!-- pizza body (arc) -->
+      <path d="${mainArc}" fill="none" stroke="${stroke}" stroke-width="${strokeW}" stroke-linejoin="round"/>
+      <!-- two lines from center to gap edges -->
+      <line x1="${cx}" y1="${cy}" x2="${ax}" y2="${ay}" stroke="${stroke}" stroke-width="${strokeW}"/>
+      <line x1="${cx}" y1="${cy}" x2="${bx}" y2="${by}" stroke="${stroke}" stroke-width="${strokeW}"/>
+      <!-- extracted slice -->
+      <path d="${slicePath}" fill="none" stroke="${stroke}" stroke-width="${strokeW}" stroke-linejoin="round"/>
+      <!-- slice lines -->
+      <line x1="${cx + ox}" y1="${cy + oy}" x2="${sax}" y2="${say}" stroke="${stroke}" stroke-width="${strokeW}"/>
+      <line x1="${cx + ox}" y1="${cy + oy}" x2="${sbx}" y2="${sby}" stroke="${stroke}" stroke-width="${strokeW}"/>
+      ${numEl}
+    </svg>`;
+  }
+
+  const sizesRow = document.getElementById('sizesRow');
+
+  sizes.forEach((s, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'size-btn' + (i === 2 ? ' selected' : '');
+    btn.innerHTML = `
+      <div class="selected-badge">Seleccionado</div>
+      <div class="size-icon">${makePieSliceSVG(s.svgSize, s.slices)}</div>
+      <div class="size-name">${s.name}</div>
+      <div class="size-price">${s.price}</div>
+    `;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+    sizesRow.appendChild(btn);
+  });
+</script>
+</body>
+</html>
+
